@@ -9,8 +9,8 @@ import android.app.Application;
 import com.gamechange.adhityan.callspyplusplus.libs.api.APICall;
 
 public class XApplication extends Application  {
-    public static final String SHARED_PREFERENCES_NAME = "parapa";
-    public static final String API_HOST = "https://api.nmbr.club/";
+    public static final String SHARED_PREFERENCES_NAME = "adhityan";
+    public static final String API_HOST = "http://api.nmbr.club/";
     //public static final String API_HOST = "http://192.168.1.2/zencard/api/";
 
     @Override
