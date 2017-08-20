@@ -2,13 +2,12 @@ package com.gamechange.adhityan.callspyplusplus.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Pair;
+import android.util.Log;
+
 import com.gamechange.adhityan.callspyplusplus.libs.Utilities;
 import com.gamechange.adhityan.callspyplusplus.libs.api.APICall;
 import com.gamechange.adhityan.callspyplusplus.libs.api.apiInterface;
 import com.gamechange.adhityan.callspyplusplus.superclasses.XApplication;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class NotifyService extends IntentService implements apiInterface {
@@ -27,18 +26,14 @@ public class NotifyService extends IntentService implements apiInterface {
     }
 
     public void processNumber(String number, String unformattedNumber, String source) {
-        List<Pair<String, String>> get = new ArrayList<>(1);
-        get.add(new Pair<>("phone", number));
-        get.add(new Pair<>("unformattedPhone", unformattedNumber));
-        get.add(new Pair<>("source", source));
-
-        new APICall(this, XApplication.API_HOST + "notify.json", "notify", get);
+        Utilities.logDebug("Processing: " + number + ", " + unformattedNumber + ", " + source);
+        new APICall(this, XApplication.API_HOST + "sms/" + number, "sms");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        APICall.init(this);
+        APICall.init();
     }
 
     @Override

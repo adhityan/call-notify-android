@@ -37,9 +37,10 @@ public class CallReceiver extends BroadcastReceiver {
                     .replace(" ", "");
             Utilities.logDebug("incomingNumber: " + incomingNumber);
 
-            if(formattedNumber.length() == 10 && Utilities.isNumeric(formattedNumber)) {
+            if(Utilities.isNumeric(formattedNumber)) {
                 Utilities.startNotificationService(context, formattedNumber, incomingNumber, NumberSource.CALL);
             }
+            else Utilities.logDebug("Number ignored");
         }
     }
 }

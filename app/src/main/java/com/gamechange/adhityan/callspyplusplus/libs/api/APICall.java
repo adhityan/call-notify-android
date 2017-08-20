@@ -1,17 +1,7 @@
 package com.gamechange.adhityan.callspyplusplus.libs.api;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.util.Pair;
-
-import com.gamechange.adhityan.callspyplusplus.libs.Utilities;
-import com.gamechange.adhityan.callspyplusplus.superclasses.XApplication;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,35 +14,26 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import com.gamechange.adhityan.callspyplusplus.libs.Utilities;
 
 public class APICall {
     private static boolean hasInit = false;
-    private static final String apiKey = "6d1cf80a6a3c0cdcadfe714d991baf5c";
+    private static final String apiKey = "1c1e1fskda6a3c0kskdfe714d773baf5x";
 
-    private static double lat;
-    private static double lng;
-
-    private apiInterface a;
-    private String url, code;
-    private List<Pair<String, String>> get, post;
+    public static void init() {
+        if (hasInit) return; hasInit = true;
+    }
 
     public APICall(apiInterface a, String url, String code) {
         this(a, url, code, null);
     }
-
     public APICall(apiInterface a, String url, String code, List<Pair<String, String>> get) {
         this(a, url, code, get, null);
     }
 
     public APICall(apiInterface a, String url, String code, List<Pair<String, String>> get, List<Pair<String, String>> post) {
-        this.a = a;
-        this.url = url;
-        this.code = code;
-        this.get = get;
-        this.post = post;
-
+        Utilities.logDebug("Making HTTP Call: " + url);
         APIResponse r = call(url, get, post);
-        r.status = r.status;
 
         if (r.status == 1) a.apiResponse(r.result, code);
         else if (r.status == 0) a.apiError(r.result, code);
@@ -62,38 +43,9 @@ public class APICall {
         }
     }
 
-    public static void init(Context c) {
-        if(hasInit) return; hasInit = true;
-
-        SharedPreferences prefs = c.getSharedPreferences(XApplication.SHARED_PREFERENCES_NAME, 0);
-        lat = prefs.getFloat("lat", 0);
-        lng = prefs.getFloat("lng", 0);
-
-        PackageManager pm = c.getPackageManager();
-        int hasPerm = pm.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, c.getPackageName());
-        if (hasPerm != PackageManager.PERMISSION_GRANTED) {
-            LocationManager locationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            String bestProvider = locationManager.getBestProvider(criteria, false);
-
-            if (bestProvider != null) {
-                Location currentLocation = locationManager.getLastKnownLocation(bestProvider);
-
-                if (currentLocation != null) {
-                    lat = currentLocation.getLatitude();
-                    lng = currentLocation.getLongitude();
-                } else lat = lng = -1;
-            }
-        }
-
-        Utilities.logDebug("Current lat: " + lat);
-        Utilities.logDebug("Current lng: " + lng);
-    }
-
     public static APIResponse call(String url) {
         return call(url, null, null);
     }
-
     public static APIResponse call(String url, List<Pair<String, String>> get) {
         return call(url, get, null);
     }
@@ -110,32 +62,29 @@ public class APICall {
         }
 
         Boolean isPost = false;
-        if (post == null) post = new ArrayList<>();
-        else isPost = true;
-
-        Boolean isLatLngPresent = false;
-        FormBody.Builder postBuilder = new FormBody.Builder();
-        for (Pair<String, String> entry : post) {
-            if(entry.first != null && entry.second != null) {
-                postBuilder.add(entry.first, entry.second);
-                if (entry.first.equalsIgnoreCase("lat") || entry.first.equalsIgnoreCase("lng")) {
-                    isLatLngPresent = true;
-                }
-            }
-        }
-
-        if (!isLatLngPresent) {
-            postBuilder.add("lat", String.valueOf(lat));
-            postBuilder.add("lng", String.valueOf(lng));
-        }
-        RequestBody postBuild = postBuilder.build();
-
         Request request = new Request.Builder()
                 .addHeader("X-HTTP-Y-API-KEY", apiKey)
                 .cacheControl(CacheControl.FORCE_NETWORK)
                 .url(url)
-                .post(postBuild)
                 .build();
+
+        if (post != null) {
+            isPost = true;
+            FormBody.Builder postBuilder = new FormBody.Builder();
+            for (Pair<String, String> entry : post) {
+                if (entry.first != null && entry.second != null) {
+                    postBuilder.add(entry.first, entry.second);
+                }
+            }
+            RequestBody postBuild = postBuilder.build();
+
+            request = new Request.Builder()
+                    .addHeader("X-HTTP-Y-API-KEY", apiKey)
+                    .cacheControl(CacheControl.FORCE_NETWORK)
+                    .url(url)
+                    .post(postBuild)
+                    .build();
+        }
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
