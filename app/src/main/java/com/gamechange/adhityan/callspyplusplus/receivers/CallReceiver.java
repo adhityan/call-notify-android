@@ -21,26 +21,29 @@ public class CallReceiver extends BroadcastReceiver {
         String stateString = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         Utilities.logDebug("onCallStateChanged: " + stateString);
 
-        if (stateString.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
+        if (stateString.equals(TelephonyManager.EXTRA_STATE_OFFHOOK) || stateString.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+            Utilities.logDebug("incomingNumber: " + incomingNumber);
+
             String formattedNumber = incomingNumber
-                    .replace("00971", "")
-                    .replace("0971", "")
                     .replace("+971", "")
-                    .replace("971", "")
-                    .replace("+97", "")
                     .replace("+91", "")
-                    .replace("091", "")
                     .replace("+", "")
                     .replace("(", "")
                     .replace(")", "")
-                    .replace(" ", "");
-            Utilities.logDebug("incomingNumber: " + incomingNumber);
+                    .replace(" ", "")
+                    .replaceAll("^[0]+", "")
+                    .replaceAll("^[0971]+", "")
+                    .replaceAll("^[971]+", "")
+                    .replaceAll("^[091]+", "")
+                    .replaceAll("^[91]+", "");
+            Utilities.logDebug("formattedNumber: " + formattedNumber);
 
-            if(Utilities.isNumeric(formattedNumber)) {
-                Utilities.startNotificationService(context, formattedNumber, incomingNumber, NumberSource.CALL);
+            if(stateString.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
+                if (Utilities.isNumeric(formattedNumber)) {
+                    Utilities.startNotificationService(context, formattedNumber, incomingNumber, NumberSource.CALL);
+                } else Utilities.logDebug("Number ignored");
             }
-            else Utilities.logDebug("Number ignored");
         }
     }
 }
