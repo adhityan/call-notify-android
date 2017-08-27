@@ -39,7 +39,7 @@ public class CallReceiver extends BroadcastReceiver {
                     .replaceAll("^[91]+", "");
             Utilities.logDebug("formattedNumber: " + formattedNumber);
 
-            if(stateString.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
+            if(stateString.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                 if (Utilities.isNumeric(formattedNumber)) {
                     Utilities.startNotificationService(context, formattedNumber, incomingNumber, NumberSource.CALL);
                 } else Utilities.logDebug("Number ignored");

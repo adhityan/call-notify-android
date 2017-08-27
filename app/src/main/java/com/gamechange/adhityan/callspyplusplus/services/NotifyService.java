@@ -9,7 +9,6 @@ import com.gamechange.adhityan.callspyplusplus.libs.api.APICall;
 import com.gamechange.adhityan.callspyplusplus.libs.api.apiInterface;
 import com.gamechange.adhityan.callspyplusplus.superclasses.XApplication;
 
-
 public class NotifyService extends IntentService implements apiInterface {
     public NotifyService()  {
         super("NotifyService");
@@ -27,7 +26,7 @@ public class NotifyService extends IntentService implements apiInterface {
 
     public void processNumber(String number, String unformattedNumber, String source) {
         Utilities.logDebug("Processing: " + number + ", " + unformattedNumber + ", " + source);
-        new APICall(this, XApplication.API_HOST + "sms/" + number, "sms");
+        new APICall(this, XApplication.API_HOST + "record/" + number, "record");
     }
 
     @Override
