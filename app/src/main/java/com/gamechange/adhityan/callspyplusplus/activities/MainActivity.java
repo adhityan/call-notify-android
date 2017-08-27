@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @NeedsPermission({Manifest.permission.READ_PHONE_STATE})
+    @NeedsPermission({ Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS })
     public void someFunction() { Log.d("ADI", "Permission obtained"); }
 
     @Override
