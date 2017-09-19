@@ -26,9 +26,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:support-v4:26.+'
 
-    compile('com.github.hotchemi:permissionsdispatcher:2.4.0') {
-        exclude module: 'support-v13'
-    }
+    compile('com.github.hotchemi:permissionsdispatcher:2.4.0') { exclude module: 'support-v13' }
     annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
 
     compile 'com.squareup.okhttp3:okhttp:3.8.1'

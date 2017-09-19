@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -87,13 +88,20 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
                         startActivity(intent);
                     }
+                    else if(type.equalsIgnoreCase("SMS")) {
+                        String phone = m.get("data").getAsJsonObject().get("phone").getAsString();
+                        Utilities.logDebug("SMS PHONE: " + phone);
+
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(phone, null, "Test", null, null);
+                    }
                 }
+                /*
                 else {
                     // Message has been received on channel stored in
                     // message.getSubscription()
                 }
 
-                /*
                     log the following items with your favorite logger
                         - message.getMessage()
                         - message.getSubscription()
@@ -105,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         pubnub.subscribe().channels(Arrays.asList("alexa")).execute();
     }
 
-    @NeedsPermission({ Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS, Manifest.permission.CALL_PHONE })
+    @NeedsPermission({ Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS })
     public void someFunction() {
         Log.d("ADI", "Permission obtained");
         Toast.makeText(this, "Complete!", Toast.LENGTH_SHORT).show();
